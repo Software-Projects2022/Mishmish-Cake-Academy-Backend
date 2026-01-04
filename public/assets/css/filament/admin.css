@@ -1,0 +1,3 @@
+body[data-panel="admin"][data-page="login"] .fi-fo-checkbox {
+    display: none !important;
+}
