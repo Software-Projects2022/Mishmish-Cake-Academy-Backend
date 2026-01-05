@@ -53,17 +53,13 @@
         <div class="programs-section">
             <h2 class="section-title">الكورسات</h2>
             <div class="programs-grid">
-
                 @foreach (auth()->guard('client')->user()->bookings as $booking)
-
-
                 @if ($booking->status == 'approved')
                 <a href="{{ route('course.show', $booking->course->id) }}">
                 @endif
                 <div class="program-card {{ $booking->status == 'approved' ? 'active' : 'cancelled' }}">
                     <button class="menu-btn"><i class="fas fa-ellipsis-v"></i></button>
                     <div class="program-status {{ $booking->status == 'approved' ? 'active' : 'cancelled' }}">
-
                         @if ($booking->status == 'approved')
                         <span class="status-dot active"> </span>نشط
                         @elseif ($booking->status == 'pending')
@@ -80,8 +76,6 @@
                 @endif
 
                 @endforeach
-
-
             </div>
         </div>
 

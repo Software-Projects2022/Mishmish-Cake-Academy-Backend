@@ -21,11 +21,7 @@
                 </div>
 
                 <div class="courses-grid">
-
-
                     @forelse ($courses as $course)
-
-
                     <div class="course-card" data-level="{{ $course->course_category_id ??'' }}">
                         <div class="course-image">
                             <img src="{{ asset('storage/' . $course->image) }}" alt="{{ $course->title }}">
