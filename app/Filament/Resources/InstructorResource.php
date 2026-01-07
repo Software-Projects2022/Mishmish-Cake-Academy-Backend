@@ -18,7 +18,10 @@ class InstructorResource extends Resource
     protected static ?string $model = Instructor::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
+    protected static ?string $navigationLabel = 'المدربين';
+    protected static ?string $pluralModelLabel = 'المدربين';
+    protected static ?string $modelLabel = 'المدرب';
+    protected static ?string $breadcrumb = 'المدربين';
     public static function form(Form $form): Form
     {
         return $form
@@ -26,7 +29,7 @@ class InstructorResource extends Resource
                 //
                 Forms\Components\TextInput::make('name')
                     ->required()
-                    ->label('Name')
+                    ->label('الاسم')
                     ->maxLength(255),
                 // Forms\Components\TextInput::make('name_ar')
                 //     ->required()
@@ -34,7 +37,7 @@ class InstructorResource extends Resource
                 //     ->maxLength(255),
                 Forms\Components\TextInput::make('title')
                     ->required()
-                    ->label('Title')
+                    ->label('العنوان')
                     ->maxLength(255),
                 // Forms\Components\TextInput::make('title_ar')
                 //     ->required()
@@ -42,11 +45,11 @@ class InstructorResource extends Resource
                 //     ->maxLength(255),
                 Forms\Components\FileUpload::make('image')
                     // ->required()
-                    ->label('Image')
+                    ->label('الصورة')
                     ->image(),
                 Forms\Components\TextInput::make('description')
                     ->required()
-                    ->label('Description')
+                    ->label('الوصف')
                     ->maxLength(255),
                 // Forms\Components\TextInput::make('description_ar')
                 //     ->required()
@@ -61,11 +64,11 @@ class InstructorResource extends Resource
             ->columns([
                 //
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Name'),
+                    ->label('الاسم'),
                 Tables\Columns\TextColumn::make('title')
-                    ->label('Title'),
+                    ->label('العنوان'),
                 Tables\Columns\ImageColumn::make('image')
-                    ->label('Image'),
+                    ->label('الصورة'),
             ])
             ->filters([
                 //

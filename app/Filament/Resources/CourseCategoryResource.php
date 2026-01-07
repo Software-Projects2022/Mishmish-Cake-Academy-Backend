@@ -18,6 +18,10 @@ class CourseCategoryResource extends Resource
     protected static ?string $model = CourseCategory::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationLabel = 'فئات الدورات   ';
+    protected static ?string $pluralModelLabel = 'فئات الدورات';
+    protected static ?string $modelLabel = 'فئة الدورات';
+    protected static ?string $breadcrumb = 'فئات الدورات';
 
     public static function form(Form $form): Form
     {
@@ -26,7 +30,7 @@ class CourseCategoryResource extends Resource
                 //
                 Forms\Components\TextInput::make('title')
                     ->required()
-                    ->label('Title')
+                    ->label('العنوان')
                     ->maxLength(255),
                 // Forms\Components\TextInput::make('title_ar')
                 //     ->required()
@@ -47,7 +51,7 @@ class CourseCategoryResource extends Resource
             ->columns([
                 //
                 Tables\Columns\TextColumn::make('title')
-                    ->label('Title'),
+                    ->label('العنوان'),
                 // Tables\Columns\TextColumn::make('title_ar')
                 //     ->label('Title Ar'),
                 // Tables\Columns\ImageColumn::make('image')

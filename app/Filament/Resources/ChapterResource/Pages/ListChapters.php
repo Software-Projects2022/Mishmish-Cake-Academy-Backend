@@ -22,15 +22,15 @@ class ListChapters extends ListRecords
     {
         $lessonId = request('record');
         $breadcrumbs = [
-            url('/admin') => 'Home',
-            CourseResource::getUrl('index') => 'Courses',
+            url('/admin') => 'الرئيسية',
+            CourseResource::getUrl('index') => 'الدورات',
         ];
 
         if ($lessonId) {
-            $breadcrumbs[LessonResource::getUrl('index', ['record' => $lessonId])] = 'Sections';
+            $breadcrumbs[LessonResource::getUrl('index', ['record' => $lessonId])] = 'المحاضرات';
         }
 
-        $breadcrumbs[null] = 'Lessons';
+        $breadcrumbs[null] = 'المحاضرات';
 
         return $breadcrumbs;
     }

@@ -18,7 +18,10 @@ class ContactResource extends Resource
     protected static ?string $model = Contact::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationLabel = 'Contact Settings';
+    protected static ?string $navigationLabel = 'الإعدادات التواصل';
+    protected static ?string $pluralModelLabel = 'الإعدادات التواصل';
+    protected static ?string $modelLabel = 'الإعداد التواصل';
+    protected static ?string $breadcrumb = 'الإعدادات التواصل';
 
 
     public static function form(Form $form): Form
@@ -28,31 +31,31 @@ class ContactResource extends Resource
                 //
                 Forms\Components\TextInput::make('email')
                     ->required()
-                    ->label('Email')
+                    ->label('البريد الإلكتروني')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('phone')
                     ->required()
-                    ->label('Phone')
+                    ->label('رقم الهاتف')
                     ->maxLength(255),
                 Forms\Components\Textarea::make('address')
                     ->required()
                     ->columnSpanFull()
-                    ->label('Address')
+                    ->label('العنوان')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('facebook')
-                    ->label('Facebook Url')
+                    ->label('رابط الفيسبوك')
                     ->url()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('instagram')
-                    ->label('Instagram Url')
+                    ->label('رابط الإنستغرام')
                     ->url()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('pinterest')
-                    ->label('Pinterest Url')
+                    ->label('رابط البينتيست')
                     ->url()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('vimeo')
-                    ->label('Vimeo Url')
+                    ->label('رابط الفيميو')
                     ->url()
                     ->maxLength(255),
             ]);
@@ -64,8 +67,10 @@ class ContactResource extends Resource
             ->columns([
                 //
                 Tables\Columns\TextColumn::make('email')
+                    ->label('البريد الإلكتروني')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('phone')
+                    ->label('رقم الهاتف')
                     ->searchable(),
             ])
             ->filters([

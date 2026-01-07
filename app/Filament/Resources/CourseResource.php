@@ -18,6 +18,10 @@ class CourseResource extends Resource
     protected static ?string $model = Course::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationLabel = 'الدورات';
+    protected static ?string $pluralModelLabel = 'الدورات';
+    protected static ?string $modelLabel = 'الدورات';
+    protected static ?string $breadcrumb = 'الدورات';
 
     public static function form(Form $form): Form
     {
@@ -30,7 +34,7 @@ class CourseResource extends Resource
                 Forms\Components\Select::make('course_category_id')
                     ->relationship('courseCategory', 'title')
                     ->required()
-                    ->label('Category'),
+                    ->label('فئة الدورات'),
 
                 Forms\Components\Select::make('instructor_id')
                     ->relationship('instructor', 'name')
@@ -38,11 +42,11 @@ class CourseResource extends Resource
 
                     ->required()
 
-                    ->label('Instructor'),
+                    ->label('المدرب'),
 
                 Forms\Components\TextInput::make('title')
                     ->required()
-                    ->label('Title')
+                    ->label('العنوان')
                     ->maxLength(255),
                 // Forms\Components\TextInput::make('title_ar')
                 //     ->required()
@@ -50,7 +54,7 @@ class CourseResource extends Resource
                 //     ->maxLength(255),
                 Forms\Components\Textarea::make('short_description')
                     ->required()
-                    ->label('Short Description')
+                    ->label('الوصف القصير')
                     ->maxLength(255),
                 // Forms\Components\Textarea::make('short_description_ar')
                 //     ->required()
@@ -60,7 +64,7 @@ class CourseResource extends Resource
                 Forms\Components\RichEditor::make('description')
                     ->required()
                     ->columnSpan('full')
-                    ->label('Description'),
+                    ->label('الوصف'),
                 // Forms\Components\RichEditor::make('description_ar')
                 //     ->required()
                 //     ->label('Description Ar'),
@@ -75,11 +79,11 @@ class CourseResource extends Resource
                 //     ->maxLength(255),
                 Forms\Components\TextInput::make('price')
                     ->required()
-                    ->label('Price')
+                    ->label('السعر')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('price_after_discount')
                     ->required()
-                    ->label('Price After Discount')
+                    ->label('السعر بعد الخصم')
                     ->maxLength(255),
 
                 // Forms\Components\TextInput::make('discount_start_date')
@@ -91,13 +95,13 @@ class CourseResource extends Resource
                 //     ->label('Discount End Date')
                 //     ->maxLength(255),
                 Forms\Components\FileUpload::make('image')
-                    ->label('Course Image')
+                    ->label('صورة الدورة')
                     ->image()
                     ->directory('courses')
                     ->nullable(),
 
                 Forms\Components\FileUpload::make('video')
-                    ->label('Course Video')
+                    ->label('فيديو الدورة')
                     ->disk('public')
                     ->previewable(true)
                     ->acceptedFileTypes(['video/*'])
@@ -116,10 +120,12 @@ class CourseResource extends Resource
                 Tables\Columns\TextColumn::make('id')
                 ->searchable(),
                 Tables\Columns\TextColumn::make('title')
+                ->label('العنوان')
                 ->searchable(),
                 // Tables\Columns\TextColumn::make('duration')
                 // ->searchable(),
                 Tables\Columns\TextColumn::make('price')
+                ->label('السعر')
                 ->searchable(),
 
                     // Tables\Columns\TextColumn::make('actions_label')
@@ -137,7 +143,7 @@ class CourseResource extends Resource
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\DeleteAction::make(),
                     Tables\Actions\Action::make('chapters')
-                        ->label('Sections')
+                        ->label('الفصول')
                         ->icon('heroicon-o-list-bullet')
                         ->url(fn (Course $record) => route(
                             'filament.admin.resources.lessons.index',

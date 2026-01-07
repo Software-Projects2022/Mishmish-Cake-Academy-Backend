@@ -21,6 +21,10 @@ class CourseBookingResource extends Resource
     protected static ?string $model = CourseBooking::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationLabel = 'حجوزات الدورات';
+    protected static ?string $pluralModelLabel = 'حجوزات الدورات';
+    protected static ?string $modelLabel = 'حجز دورة';
+    protected static ?string $breadcrumb = 'حجوزات الدورات';
 
     public static function form(Form $form): Form
     {
@@ -28,11 +32,14 @@ class CourseBookingResource extends Resource
             ->schema([
                 Forms\Components\Select::make('client_id')
                     ->relationship('client', 'name')
+                    ->label('العميل')
                     ->required(),
                 Forms\Components\Select::make('course_id')
                     ->relationship('course', 'title')
+                    ->label('الدورة')
                     ->required(),
                 Forms\Components\Select::make('status')
+                    ->label('الحالة')
                     ->options([
                         'pending' => 'قيد الإنتظار',
                         'approved' => 'موافق',
@@ -49,13 +56,17 @@ class CourseBookingResource extends Resource
             ->columns([
                 //
                 Tables\Columns\TextColumn::make('client.name')
+                    ->label('العميل')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('course.title')
+                        ->label('الدورة')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('status')
+                    ->label('الحالة')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime('d-m-Y H:i')
+                    ->label('تاريخ الحجز')
                     ->searchable(),
             ])
             ->filters([

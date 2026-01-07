@@ -18,6 +18,10 @@ class NewsletterResource extends Resource
     protected static ?string $model = Newsletter::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationLabel = 'النشرة الإخبارية';
+    protected static ?string $pluralModelLabel = 'النشرة الإخبارية';
+    protected static ?string $modelLabel = 'النشرة الإخبارية';
+    protected static ?string $breadcrumb = 'النشرة الإخبارية';
 
     public static function form(Form $form): Form
     {
@@ -27,11 +31,11 @@ class NewsletterResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->readOnly()
-                    ->label('Name'),
+                    ->label('الاسم'),
                 Forms\Components\TextInput::make('email')
                     ->required()
                     ->email()
-                    ->label('Email')
+                    ->label('البريد الإلكتروني')
                     ->readOnly(),
             ]);
     }
@@ -42,9 +46,9 @@ class NewsletterResource extends Resource
             ->columns([
                 //
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Name'),
+                    ->label('الاسم'),
                 Tables\Columns\TextColumn::make('email')
-                    ->label('Email'),
+                    ->label('البريد الإلكتروني'),
             ])
             ->filters([
                 //

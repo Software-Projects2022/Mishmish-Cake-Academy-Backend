@@ -19,14 +19,17 @@ class PageResource extends Resource
     protected static ?string $model = Page::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
+    protected static ?string $navigationLabel = 'الصفحات';
+    protected static ?string $pluralModelLabel = 'الصفحات';
+    protected static ?string $modelLabel = 'الصفحة';
+    protected static ?string $breadcrumb = 'الصفحات';
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('title')
                     ->required()
-                    ->label('Title')
+                    ->label('العنوان')
                     ->maxLength(255)
                     ->reactive()
                     ->afterStateUpdated(function ($state, callable $set) {
@@ -35,18 +38,18 @@ class PageResource extends Resource
 
                 Forms\Components\TextInput::make('slug')
                     ->required()
-                    ->label('Slug')
+                    ->label('الرابط')
                     ->unique(ignoreRecord: true) // Important: unique except current record when editing
                     ->maxLength(255),
 
                 Forms\Components\Textarea::make('short_description')
                 ->required()
-                ->label('Short Description'),
+                ->label('الوصف القصير'),
                 Forms\Components\RichEditor::make('description')
                 ->required()
-                ->label('Description'),
+                ->label('الوصف'),
                 Forms\Components\FileUpload::make('image')
-                ->label('Page Image')
+                ->label('صورة الصفحة')
                 ->image()
                 ->directory('pages')
                 ->nullable(),
@@ -60,8 +63,10 @@ class PageResource extends Resource
             ->columns([
                 //
                 Tables\Columns\TextColumn::make('title')
+                ->label('العنوان')
                 ->searchable(),
                 Tables\Columns\ImageColumn::make('image')
+                ->label('صورة الصفحة')
                 ->searchable(),
             ])
             ->filters([

@@ -18,6 +18,10 @@ class DesignResource extends Resource
     protected static ?string $model = Design::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationLabel = 'التصاميم';
+    protected static ?string $pluralModelLabel = 'التصاميم';
+    protected static ?string $modelLabel = 'التصميم';
+    protected static ?string $breadcrumb = 'التصاميم';
 
     public static function form(Form $form): Form
     {
@@ -26,7 +30,7 @@ class DesignResource extends Resource
                 //
                 Forms\Components\TextInput::make('title')
                     ->required()
-                    ->label('Title')
+                    ->label('العنوان')
                     ->maxLength(255),
                 // Forms\Components\TextInput::make('title_ar')
                 //     ->required()
@@ -34,7 +38,7 @@ class DesignResource extends Resource
                 //     ->maxLength(255),
                 Forms\Components\FileUpload::make('image')
                     ->required()
-                    ->label('Image')
+                    ->label('الصورة')
                     ->image(),
             ]);
     }
@@ -45,8 +49,10 @@ class DesignResource extends Resource
             ->columns([
                 //
                 Tables\Columns\TextColumn::make('title')
+                    ->label('العنوان')
                     ->searchable(),
                 Tables\Columns\ImageColumn::make('image')
+                    ->label('الصورة')
                     ->searchable(),
             ])
             ->filters([

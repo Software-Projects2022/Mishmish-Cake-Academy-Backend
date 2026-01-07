@@ -23,15 +23,15 @@ class ListLessons extends ListRecords
     {
         $courseId = request('record');
         $breadcrumbs = [
-            url('/admin') => 'Home',
-            CourseResource::getUrl('index') => 'Courses',
+            url('/admin') => 'الرئيسية',
+            CourseResource::getUrl('index') => 'الدورات',
         ];
 
         if ($courseId) {
-            $breadcrumbs[CourseResource::getUrl('edit', ['record' => $courseId])] = 'Edit Course';
+            $breadcrumbs[CourseResource::getUrl('edit', ['record' => $courseId])] = 'تعديل الدورة';
         }
 
-        $breadcrumbs[null] = 'Sections';
+        $breadcrumbs[null] = 'الفصول';
 
         return $breadcrumbs;
     }

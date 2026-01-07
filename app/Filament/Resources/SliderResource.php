@@ -18,6 +18,10 @@ class SliderResource extends Resource
     protected static ?string $model = Slider::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationLabel = 'سلايدر';
+    protected static ?string $pluralModelLabel = 'سلايدر';
+    protected static ?string $modelLabel = 'سلايدر';
+    protected static ?string $breadcrumb = 'سلايدر';
 
     public static function form(Form $form): Form
     {
@@ -26,11 +30,11 @@ class SliderResource extends Resource
                 //
                 Forms\Components\TextInput::make('title')
                     ->required()
-                    ->label('Title')
+                    ->label('العنوان')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('subtitle')
                     ->required()
-                    ->label('Subtitle')
+                    ->label('محتوي')
                     ->maxLength(255),
                 // Forms\Components\TextInput::make('title_ar')
                 //     ->required()
@@ -42,11 +46,11 @@ class SliderResource extends Resource
                 //     ->maxLength(255),
                 Forms\Components\FileUpload::make('image')
                     ->required()
-                    ->label('Image')
+                    ->label('الصورة')
                     ->image(),
                 Forms\Components\TextInput::make('button_url')
                     ->required()
-                    ->label('Button Url')
+                    ->label('رابط الزر')
                     ->maxLength(255),
             ]);
     }
@@ -57,11 +61,11 @@ class SliderResource extends Resource
             ->columns([
                 //
                 Tables\Columns\TextColumn::make('title')
-                    ->label('Title'),
+                    ->label('العنوان'),
                 Tables\Columns\TextColumn::make('subtitle')
-                    ->label('Subtitle'),
+                    ->label('المحتوي'),
                 Tables\Columns\ImageColumn::make('image')
-                    ->label('Image'),
+                    ->label('الصورة'),
             ])
             ->filters([
                 //

@@ -18,9 +18,9 @@ class ChapterResource extends Resource
     protected static ?string $model = Chapter::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $breadcrumb = 'Lessons';
-    protected static ?string $pluralModelLabel = 'Lessons';
-    protected static ?string $modelLabel = 'Lesson';
+    protected static ?string $breadcrumb = 'المحاضرات';
+    protected static ?string $pluralModelLabel = 'المحاضرات';
+    protected static ?string $modelLabel = 'المحاضرة';
     public static function shouldRegisterNavigation(): bool
     {
         return false;
@@ -33,17 +33,17 @@ class ChapterResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('title')
                 ->required()
-                ->label('Title')
+                ->label('العنوان')
                 ->maxLength(255),
                 Forms\Components\TextInput::make('duration')
                 ->type('number')
                 ->required()
-                ->label('Duration')
+                ->label('المدة')
                 ->maxLength(255),
 
                 Forms\Components\FileUpload::make('video_url')
                 ->disk('bunnycdn')
-                ->label('Video')
+                ->label('الفيديو')
                 ->directory('courses/videos')
                 ->acceptedFileTypes(['video/mp4'])
                 ->maxSize(1024 * 500),
@@ -72,7 +72,7 @@ class ChapterResource extends Resource
         ->headerActions([
             // ONLY your custom button here
             Tables\Actions\Action::make('create_lesson')
-                ->label('New lesson')
+                ->label('المحاضرة الجديدة')
                 ->icon('heroicon-o-plus')
                 ->url(fn () => route('filament.admin.resources.chapters.create', [
                     'record' => request('record')
@@ -88,8 +88,10 @@ class ChapterResource extends Resource
 
             ->columns([
                 Tables\Columns\TextColumn::make('title')
+                ->label('العنوان')
                 ->searchable(),
                 Tables\Columns\TextColumn::make('duration')
+                ->label('المدة')
                 ->searchable(),
                 // Tables\Columns\TextColumn::make('lesson.title')
                 // ->searchable(),

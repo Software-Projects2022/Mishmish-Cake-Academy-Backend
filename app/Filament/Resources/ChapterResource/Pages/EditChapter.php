@@ -30,10 +30,10 @@ class EditChapter extends EditRecord
     {
         $lessonId = request('record');
         $breadcrumbs = [
-            url('/admin') => 'Home',
-            CourseResource::getUrl('index') => 'Courses',
-            LessonResource::getUrl('index', ['record' => $lessonId]) => 'Sections',
-            null => 'Edit Lessons Sections',
+            url('/admin') => 'الرئيسية',
+            CourseResource::getUrl('index') => 'الدورات',
+            LessonResource::getUrl('index', ['record' => $lessonId]) => 'المحاضرات',
+            null => 'تعديل المحاضرة',
             ];
 
             return $breadcrumbs;

@@ -18,9 +18,9 @@ class LessonResource extends Resource
     protected static ?string $model = Lesson::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $breadcrumb = 'Sections';
-    protected static ?string $pluralModelLabel = 'Sections';
-    protected static ?string $modelLabel = 'Section';
+    protected static ?string $breadcrumb = 'الفصول';
+    protected static ?string $pluralModelLabel = 'الفصول';
+    protected static ?string $modelLabel = 'الفصل';
 
     public static function shouldRegisterNavigation(): bool
     {
@@ -36,7 +36,7 @@ class LessonResource extends Resource
 
                 Forms\Components\TextInput::make('title')
                 ->required()
-                ->label('Title')
+                ->label('العنوان')
                 ->maxLength(255),
                 // Forms\Components\TextInput::make('title_ar')
                 // ->required()
@@ -46,14 +46,14 @@ class LessonResource extends Resource
 
                 Forms\Components\ColorPicker::make('color')
                 ->required()
-                ->label('Color')
+                ->label('اللون')
                 ->default('#000000'),
 
 
                 Forms\Components\FileUpload::make('icon')
                 ->required()
                 ->image()
-                ->label('Icon'),
+                ->label('الأيقونة'),
                 // Forms\Components\TextInput::make('duration')
                 // ->required()
                 // ->label('Duration')
@@ -69,7 +69,7 @@ class LessonResource extends Resource
         ->headerActions([
             // ONLY your custom button here
             Tables\Actions\Action::make('create_section')
-                ->label('New section')
+                ->label('الفصل الجديد')
                 ->icon('heroicon-o-plus')
                 ->url(fn () => route('filament.admin.resources.lessons.create', [
                     'record' => request('record')
@@ -86,6 +86,7 @@ class LessonResource extends Resource
             ->columns([
                 //
                 Tables\Columns\TextColumn::make( 'title')
+                ->label('العنوان')
                 ->searchable()
                 // ->formatStateUsing(fn ($state) => substr($state, 0, 20))
                 ,
@@ -102,15 +103,15 @@ class LessonResource extends Resource
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\DeleteAction::make(),
-                    Tables\Actions\Action::make('Lessons')
+                    Tables\Actions\Action::make('chapters')
                     ->url(fn (Lesson $record) => route(
                         'filament.admin.resources.chapters.index',
                         ['record' => $record->id]
                     ))
-                    ->label('Lessons')
+                    ->label('المحاضرات')
                     ->icon('heroicon-o-list-bullet'),
                 ])
-                ->label('Actions')
+                ->label('الإجراءات')
                 ->icon(null),
             ])->heading('Actions')
             ->bulkActions([

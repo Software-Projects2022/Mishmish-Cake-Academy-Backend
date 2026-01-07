@@ -22,10 +22,10 @@ class CreateLesson extends CreateRecord
     {
         $courseId = request('record');
         $breadcrumbs = [
-            url('/admin') => 'Home',
-            CourseResource::getUrl('index') => 'Courses',
-            LessonResource::getUrl('index', ['record' => $courseId]) => 'Sections',
-            null => 'Create Section',
+            url('/admin') => 'الرئيسية',
+            CourseResource::getUrl('index') => 'الدورات',
+            LessonResource::getUrl('index', ['record' => $courseId]) => 'الفصول',
+            null => 'إنشاء الفصل',
         ];
 
         return $breadcrumbs;
