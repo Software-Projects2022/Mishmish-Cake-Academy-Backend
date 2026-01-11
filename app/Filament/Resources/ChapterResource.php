@@ -45,8 +45,7 @@ class ChapterResource extends Resource
                 ->disk('bunnycdn')
                 ->label('الفيديو')
                 ->directory('courses/videos')
-                ->acceptedFileTypes(['video/mp4'])
-                ->maxSize(1024 * 500),
+                ->acceptedFileTypes(['video/mp4']),
 
                 // Forms\Components\TextInput::make('video_url_ar')
                 // ->required()
