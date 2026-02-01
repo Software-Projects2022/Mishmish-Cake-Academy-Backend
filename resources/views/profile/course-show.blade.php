@@ -66,7 +66,7 @@
                                     </div>
 
                                     <div class="video-wrapper">
-                                        <video src="{{ asset('storage/' . $chapter->video_url) }}" controls></video>
+                                        <video src="{{$chapter->video_url}}" controls></video>
                                     </div>
 
                                     <div class="chapter-description">

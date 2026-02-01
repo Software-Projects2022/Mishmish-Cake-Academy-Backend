@@ -41,16 +41,11 @@ class ChapterResource extends Resource
                 ->label('المدة')
                 ->maxLength(255),
 
-                Forms\Components\FileUpload::make('video_url')
-                ->disk('bunnycdn')
-                ->label('الفيديو')
-                ->directory('courses/videos')
-                ->acceptedFileTypes(['video/mp4']),
+                Forms\Components\Textarea::make('video_url')
+                ->label(' رابط الفيديو')
+                ->columnSpanFull()
+                ->maxLength(255),
 
-                // Forms\Components\TextInput::make('video_url_ar')
-                // ->required()
-                // ->label('Video Url Ar')
-                // ->maxLength(255),
                 Forms\Components\Hidden::make('lesson_id')
                 ->default(fn () => request('record')),
 
