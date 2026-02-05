@@ -41,10 +41,17 @@ class ChapterResource extends Resource
                 ->label('المدة')
                 ->maxLength(255),
 
-                Forms\Components\Textarea::make('video_url')
-                ->label(' رابط الفيديو')
-                ->columnSpanFull()
-                ->maxLength(255),
+                Forms\Components\Select::make('video_id')
+                    ->label('الفيديو')
+                    ->relationship('video', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->placeholder('اختر فيديو من المكتبة')
+                    ->helperText('يمكنك رفع فيديوهات جديدة من قسم "الفيديوهات"')
+                    ->columnSpanFull(),
+
+                // Legacy field (hidden, for backward compatibility)
+                Forms\Components\Hidden::make('video_url'),
 
                 Forms\Components\Hidden::make('lesson_id')
                 ->default(fn () => request('record')),

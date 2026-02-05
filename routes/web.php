@@ -7,6 +7,7 @@ use App\Http\Controllers\CoursesController;
 use App\Http\Controllers\DetelsCoursesController;
 use App\Http\Controllers\AboutUsController;
 use App\Http\Controllers\NewsletterController;
+use App\Http\Controllers\VideoController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 /*
 |--------------------------------------------------------------------------
@@ -46,4 +47,14 @@ Route::get('/about-us', [AboutUsController::class, 'index'])->name('about-us');
 Route::get('/terms-and-conditions', [AboutUsController::class, 'termsAndConditions'])->name('terms-and-conditions');
 Route::get('/privacy-policy', [AboutUsController::class, 'privacyPolicy'])->name('privacy-policy');
 Route::post('/newsletter', [NewsletterController::class, 'store'])->name('newsletter');
+
+// Video upload routes (protected for admin panel)
+Route::middleware(['web', 'auth'])->prefix('admin/api/videos')->group(function () {
+    Route::post('/get-signed-url', [VideoController::class, 'getSignedUploadUrl'])->name('videos.signed-url');
+    Route::post('/confirm-upload', [VideoController::class, 'confirmUpload'])->name('videos.confirm-upload');
+    Route::post('/cancel-upload', [VideoController::class, 'cancelUpload'])->name('videos.cancel-upload');
+    Route::get('/', [VideoController::class, 'index'])->name('videos.index');
+    Route::delete('/{video}', [VideoController::class, 'destroy'])->name('videos.destroy');
+});
+
 require __DIR__.'/auth.php';
