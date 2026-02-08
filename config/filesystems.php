@@ -51,6 +51,13 @@ return [
             'region' =>'de',
         ],
 
+        'gcs' => [
+            'driver' => 'gcs',
+            'project_id' => env('GCS_PROJECT_ID'),
+            'bucket' => env('GCS_BUCKET'),
+            'key_file' => env('GCS_KEY_FILE'), // Path to service account JSON file
+        ],
+
 
 
         's3' => [

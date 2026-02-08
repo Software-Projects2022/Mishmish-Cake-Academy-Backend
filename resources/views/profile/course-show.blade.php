@@ -66,7 +66,13 @@
                                     </div>
 
                                     <div class="video-wrapper">
-                                        <video src="{{$chapter->video_url}}" controls></video>
+                                        @if($chapter->video)
+                                            <video src="{{ $chapter->video->url }}" controls></video>
+                                        @elseif($chapter->video_url)
+                                            <video src="{{ $chapter->video_url }}" controls></video>
+                                        @else
+                                            <div class="no-video">لا يوجد فيديو</div>
+                                        @endif
                                     </div>
 
                                     <div class="chapter-description">

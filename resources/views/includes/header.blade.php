@@ -7,27 +7,29 @@
         <div class="container">
             <div class="top-bar-content">
                 <div class="contact-info">
-                    <a href="tel:{{ $contact->phone }}">
+                    <a href="tel:{{ $contact->phone ?? '' }}">
                         <i class="fas fa-phone"></i>
-                        <span>{{ $contact->phone }}</span>
+                        <span>{{ $contact->phone ?? '' }}</span>
                     </a>
-                    <a href="mailto:{{ $contact->email }}">
+                    <a href="mailto:{{ $contact->email ?? '' }}">
                         <i class="fas fa-envelope"></i>
-                        <span>{{ $contact->email }}</span>
+                        <span>{{ $contact->email ?? '' }}</span>
                     </a>
                     <div class="social-links">
-                        <a href="{{ $contact->facebook }}" title="فيسبوك" target="_blank" aria-label="Facebook">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="{{ $contact->instagram }}" title="انستجرام" target="_blank" aria-label="Instagram">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="{{ $contact->pinterest }}" title="بنترست" target="_blank" aria-label="Pinterest">
-                            <i class="fab fa-pinterest-p"></i>
-                        </a>
-                        <a href="{{ $contact->vimeo }}" title="فيميو" target="_blank" aria-label="Vimeo">
-                            <i class="fab fa-vimeo-v"></i>
-                        </a>
+                        @if($contact)
+                            <a href="{{ $contact->facebook }}" title="فيسبوك" target="_blank" aria-label="Facebook">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="{{ $contact->instagram }}" title="انستجرام" target="_blank" aria-label="Instagram">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="{{ $contact->pinterest }}" title="بنترست" target="_blank" aria-label="Pinterest">
+                                <i class="fab fa-pinterest-p"></i>
+                            </a>
+                            <a href="{{ $contact->vimeo }}" title="فيميو" target="_blank" aria-label="Vimeo">
+                                <i class="fab fa-vimeo-v"></i>
+                            </a>
+                        @endif
                     </div>
                 </div>
                 <div class="account-cart">

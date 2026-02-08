@@ -23,8 +23,8 @@
         <div class="info-section">
             <div class="info-block">
                 <h3>تواصل معنا</h3>
-                <p>البريد الإلكتروني: <a href="mailto:{{ $contact->email }}">{{ $contact->email }}</a></p>
-                <p>الهاتف المحمول: {{ $contact->phone }}</p>
+                <p>البريد الإلكتروني: <a href="mailto:{{ $contact->email ?? '' }}">{{ $contact->email ?? '' }}</a></p>
+                <p>الهاتف المحمول: {{ $contact->phone ?? '' }}</p>
             </div>
 
             <div class="info-block">
@@ -35,7 +35,7 @@
 
             <div class="info-block">
                 <h3>الموقع</h3>
-                <p>{{ $contact->address }}</p>
+                <p>{{ $contact->address ?? '' }}</p>
             </div>
         </div>
 
@@ -43,11 +43,13 @@
         <div class="bottom-section">
             <p class="copyright">جميع الحقوق محفوظة مشمة كيك اكاديمي 2025</p>
             <div class="social-icons">
-                <a href="{{ $contact->facebook }}" target="_blank" aria-label="فيسبوك"><i class="fab fa-facebook-f"></i></a>
-                <a href="{{ $contact->instagram }}" target="_blank" aria-label="انستجرام"><i class="fab fa-instagram"></i></a>
-                <a href="{{ $contact->twitter }}" target="_blank" aria-label="تويتر"><i class="fab fa-twitter"></i></a>
-                <a href="{{ $contact->pinterest }}" target="_blank" aria-label="بنترست"><i class="fab fa-pinterest-p"></i></a>
-                <a href="{{ $contact->vimeo }}" target="_blank" aria-label="فيميو"><i class="fab fa-vimeo-v"></i></a>
+                @if($contact)
+                    <a href="{{ $contact->facebook }}" target="_blank" aria-label="فيسبوك"><i class="fab fa-facebook-f"></i></a>
+                    <a href="{{ $contact->instagram }}" target="_blank" aria-label="انستجرام"><i class="fab fa-instagram"></i></a>
+                    <a href="{{ $contact->twitter }}" target="_blank" aria-label="تويتر"><i class="fab fa-twitter"></i></a>
+                    <a href="{{ $contact->pinterest }}" target="_blank" aria-label="بنترست"><i class="fab fa-pinterest-p"></i></a>
+                    <a href="{{ $contact->vimeo }}" target="_blank" aria-label="فيميو"><i class="fab fa-vimeo-v"></i></a>
+                @endif
             </div>
         </div>
     </div>
