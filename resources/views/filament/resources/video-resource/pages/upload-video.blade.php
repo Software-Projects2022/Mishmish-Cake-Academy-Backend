@@ -257,6 +257,7 @@
                                 console.error('Failed to confirm upload:', error);
                             }
                         } else {
+                            console.log(this.xhr.status);
                             this.handleUploadError('فشل رفع الملف');
                         }
                     });

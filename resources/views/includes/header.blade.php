@@ -1,3 +1,18 @@
+<style>
+    .only-mobile {
+        display: none !important;
+    }
+    @media(max-width:991px) {
+        .only-mobile {
+            display: block !important;
+        }
+    }
+    @media(min-width:992px) {
+        .only-mobile {
+            display: none !important;
+        }
+    }
+</style>
 <header class="header_main_nav">
     <!-- Overlay for mobile menu -->
     <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
@@ -82,9 +97,39 @@
                     </ul>
                 </nav>
 
+
+
                 <button class="mobile-menu-btn_tow" aria-label="تغيير اللغة">
                     <i class="fas fa-globe"></i> EN
+
                 </button>
+
+
+                <div class="mobile-menu-btn_tow  only-mobile">
+                    @auth('client')
+                    <a href="{{ route('dashboard') }}" class="mobile-menu-btn_tow">
+                        <i class="fas fa-user"></i>
+                        <span>حسابي</span>
+                    </a>
+
+                            {{-- <form action="{{ route('client.logout') }}" method="POST">
+                        @csrf
+                        <a o onclick="event.preventDefault(); this.closest('form').submit();" class="btn-logout">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>تسجيل الخروج</span>
+                        </a>
+                    </form> --}}
+
+                    @endauth
+                    @guest('client')
+                    <a href="{{ route('login') }}" class="mobile-menu-btn_tow">
+                        <i class="fas fa-user"></i>
+                        <span>تسجيل الدخول</span>
+                    </a>
+                    @endguest
+                </div>
+
+
 
 
 
