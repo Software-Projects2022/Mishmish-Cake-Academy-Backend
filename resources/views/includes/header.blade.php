@@ -107,7 +107,7 @@
 
                 <div class="mobile-menu-btn_tow  only-mobile">
                     @auth('client')
-                    <a href="{{ route('dashboard') }}" class="mobile-menu-btn_tow">
+                    <a href="{{ route('dashboard') }}" class="mobile-menu-btn_tow" style="  font-size: 15px;text-decoration: none;">
                         <i class="fas fa-user"></i>
                         <span>حسابي</span>
                     </a>
@@ -122,7 +122,7 @@
 
                     @endauth
                     @guest('client')
-                    <a href="{{ route('login') }}" class="mobile-menu-btn_tow">
+                    <a href="{{ route('login') }}" class="mobile-menu-btn_tow" style="  font-size: 15px;text-decoration: none;">
                         <i class="fas fa-user"></i>
                         <span>تسجيل الدخول</span>
                     </a>
