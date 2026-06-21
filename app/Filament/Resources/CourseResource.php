@@ -65,6 +65,12 @@ class CourseResource extends Resource
                     ->required()
                     ->columnSpan('full')
                     ->label('الوصف'),
+                Forms\Components\RichEditor::make('ingredients')
+                    ->required()
+                    ->columnSpan('full')
+                    ->label('المقادير'),
+                    
+                    
                 // Forms\Components\RichEditor::make('description_ar')
                 //     ->required()
                 //     ->label('Description Ar'),

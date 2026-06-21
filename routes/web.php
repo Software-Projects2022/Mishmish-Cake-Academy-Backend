@@ -20,6 +20,11 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 |
 */
 
+Route::get('/linkstorage', function () {
+    Artisan::call('storage:link');
+    return 'Storage link created.';
+});
+
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/courses', [CoursesController::class, 'index'])->name('courses');
 Route::get('/course-details/{id}', [DetelsCoursesController::class, 'index'])->name('course.details');

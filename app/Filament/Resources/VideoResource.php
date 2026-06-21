@@ -71,6 +71,15 @@ class VideoResource extends Resource
                     ->label('اسم الفيديو')
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('url')
+                    ->label('رابط الفيديو')
+                    ->icon('heroicon-o-link')
+                    ->iconColor('primary')
+                    ->limit(50)
+                    ->searchable()
+                    ->sortable()
+                    ->url(fn (Video $record) => $record->url)
+                    ->openUrlInNewTab(),
 
                 Tables\Columns\TextColumn::make('formatted_size')
                     ->label('الحجم'),

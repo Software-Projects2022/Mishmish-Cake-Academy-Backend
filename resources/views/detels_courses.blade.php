@@ -56,13 +56,13 @@
                                 </div>
                             </div>
 
-                            <div class="feature-item">
-                                <i class="fas fa-certificate" style="color: #3b82f6;"></i>
-                                <div>
-                                    <h4>شهادة معتمدة</h4>
-                                    <p>تحصل على شهادة إتمام الدورة</p>
-                                </div>
-                            </div>
+                            <!--<div class="feature-item">-->
+                            <!--    <i class="fas fa-certificate" style="color: #3b82f6;"></i>-->
+                            <!--    <div>-->
+                            <!--        <h4>شهادة معتمدة</h4>-->
+                            <!--        <p>تحصل على شهادة إتمام الدورة</p>-->
+                            <!--    </div>-->
+                            <!--</div>-->
 
                             <div class="feature-item">
                                 <i class="fas fa-comments" style="color: #7c3aed;"></i>
@@ -75,7 +75,7 @@
                             <div class="feature-item">
                                 <i class="fas fa-infinity" style="color: #ec4899;"></i>
                                 <div>
-                                    <h4>وصول مدى الحياة</h4>
+                                    <h4>وصول لمدة 12 شهر</h4>
                                     <p>شاهدي المحتوى بأي وقت</p>
                                 </div>
                             </div>
@@ -210,8 +210,7 @@
                             <p><i class="fas fa-play"></i> مدة الدورة:{{ $course->lessons->sum('total_duration') }}
                                 ساعة</p>
                             <p><i class="fas fa-video"></i> {{ $course->lessons->count('total_chapters') }} درس فيديو</p>
-                            <p><i class="fas fa-infinity"></i> وصول مدى الحياة</p>
-                            <p><i class="fas fa-certificate"></i> شهادة معتمدة</p>
+                            <p><i class="fas fa-infinity"></i> وصول لمدة 12 شهر</p>
                             <p><i class="fas fa-mobile"></i> تعمل على جميع الأجهزة</p>
                         </div>
                     </div>

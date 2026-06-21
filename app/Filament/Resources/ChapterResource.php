@@ -40,6 +40,10 @@ class ChapterResource extends Resource
                 ->required()
                 ->label('المدة')
                 ->maxLength(255),
+                Forms\Components\RichEditor::make('ingredients')
+                    ->required()
+                    ->columnSpan('full')
+                    ->label('المقادير'),
 
                 Forms\Components\Select::make('video_id')
                     ->label('الفيديو')

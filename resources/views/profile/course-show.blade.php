@@ -43,6 +43,10 @@
             <div class="course-description">
                 <p>{!! $course->description !!}</p>
             </div>
+            
+
+
+            
 
             <div class="lessons-container">
                 @foreach ($course->lessons as $lesson)
@@ -73,6 +77,13 @@
                                         @else
                                             <div class="no-video">لا يوجد فيديو</div>
                                         @endif
+                                    </div>
+                                    <div class="section-header">
+                                        <h2>المقادير</h2>
+                                    </div>
+                        
+                                    <div class="course-description">
+                                        <p>{!! $chapter->ingredients !!}</p>
                                     </div>
 
                                     <div class="chapter-description">
