@@ -140,18 +140,6 @@ class GcsUploadService
     }
 
     /**
-     * Delete all objects under a GCS prefix.
-     */
-    public function deleteByPrefix(string $prefix): void
-    {
-        $objects = $this->bucket->objects(['prefix' => rtrim($prefix, '/') . '/']);
-
-        foreach ($objects as $object) {
-            $object->delete();
-        }
-    }
-
-    /**
      * Check if a file exists in GCS.
      *
      * @param string $path File path in bucket
@@ -164,94 +152,5 @@ class GcsUploadService
         } catch (\Exception $e) {
             return false;
         }
-    }
-
-    /**
-     * Generate a signed URL for reading a private file from GCS.
-     */
-    public function generateSignedReadUrl(
-        string $path,
-        int $expiresInMinutes = null
-    ): string {
-        $expiresInMinutes ??= config('video.signed_url_expiry_minutes', 30);
-
-        $object = $this->bucket->object($path);
-
-        return $object->signedUrl(
-            new \DateTime('+' . $expiresInMinutes . ' minutes'),
-            [
-                'method' => 'GET',
-                'version' => 'v4',
-            ]
-        );
-    }
-
-    /**
-     * Download a GCS object to a local file.
-     */
-    public function downloadToLocal(string $path, string $localPath): void
-    {
-        $this->bucket->object($path)->downloadToFile($localPath);
-    }
-
-    /**
-     * Get object contents as a string.
-     */
-    public function getObjectContents(string $path): string
-    {
-        return $this->bucket->object($path)->downloadAsString();
-    }
-
-    /**
-     * Upload a local file to GCS.
-     */
-    public function uploadFromLocal(
-        string $localPath,
-        string $gcsPath,
-        ?string $contentType = null
-    ): void {
-        $options = ['name' => $gcsPath];
-
-        if ($contentType) {
-            $options['metadata'] = ['contentType' => $contentType];
-        }
-
-        $this->bucket->upload(fopen($localPath, 'r'), $options);
-    }
-
-    /**
-     * Upload all files from a local directory to a GCS prefix.
-     */
-    public function uploadDirectory(string $localDir, string $gcsPrefix): void
-    {
-        $files = glob(rtrim($localDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . '*');
-
-        foreach ($files as $file) {
-            if (!is_file($file)) {
-                continue;
-            }
-
-            $filename = basename($file);
-            $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-
-            if (!in_array($extension, ['m3u8', 'ts'], true)) {
-                continue;
-            }
-
-            $gcsPath = rtrim($gcsPrefix, '/') . '/' . $filename;
-            $contentType = $this->guessContentType($filename);
-
-            $this->uploadFromLocal($file, $gcsPath, $contentType);
-        }
-    }
-
-    protected function guessContentType(string $filename): ?string
-    {
-        return match (strtolower(pathinfo($filename, PATHINFO_EXTENSION))) {
-            'm3u8' => 'application/vnd.apple.mpegurl',
-            'ts' => 'video/mp2t',
-            'mp4' => 'video/mp4',
-            default => null,
-        };
     }
 }
