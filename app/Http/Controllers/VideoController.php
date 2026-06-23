@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\ProcessVideoToHls;
 use App\Models\Video;
 use App\Services\GcsUploadService;
 use Illuminate\Http\Request;
@@ -99,7 +100,10 @@ class VideoController extends Controller
             $video->update([
                 'status' => 'completed',
                 'duration' => $request->duration,
+                'hls_status' => 'pending',
             ]);
+
+            ProcessVideoToHls::dispatch($video->fresh());
 
             return response()->json([
                 'success' => true,
@@ -163,9 +167,12 @@ class VideoController extends Controller
     public function destroy(Video $video): JsonResponse
     {
         try {
-            // Delete from GCS
             if ($video->path) {
                 $this->gcsService->deleteFile($video->path);
+            }
+
+            if ($video->hls_path) {
+                $this->gcsService->deleteByPrefix('videos/hls/' . $video->id);
             }
 
             $video->delete();

@@ -70,13 +70,7 @@
                                     </div>
 
                                     <div class="video-wrapper">
-                                        @if($chapter->video)
-                                            <video src="{{ $chapter->video->url }}" controls></video>
-                                        @elseif($chapter->video_url)
-                                            <video src="{{ $chapter->video_url }}" controls></video>
-                                        @else
-                                            <div class="no-video">لا يوجد فيديو</div>
-                                        @endif
+                                        <x-protected-video-player :chapter="$chapter" />
                                     </div>
                                     <div class="section-header">
                                         <h2>المقادير</h2>
