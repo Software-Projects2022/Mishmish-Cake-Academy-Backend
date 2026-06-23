@@ -103,22 +103,6 @@ class VideoResource extends Resource
                         default => $state,
                     }),
 
-                Tables\Columns\BadgeColumn::make('hls_status')
-                    ->label('HLS')
-                    ->colors([
-                        'warning' => 'pending',
-                        'primary' => 'processing',
-                        'success' => 'ready',
-                        'danger' => 'failed',
-                    ])
-                    ->formatStateUsing(fn (?string $state): string => match ($state) {
-                        'pending' => 'بانتظار التحويل',
-                        'processing' => 'جاري التحويل',
-                        'ready' => 'محمي',
-                        'failed' => 'فشل التحويل',
-                        default => '—',
-                    }),
-
                 Tables\Columns\TextColumn::make('chapters_count')
                     ->label('مستخدم في')
                     ->counts('chapters')
@@ -144,14 +128,9 @@ class VideoResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
                     ->before(function (Video $record) {
-                        $gcs = app(\App\Services\GcsUploadService::class);
-
+                        // Delete from GCS when deleting record
                         if ($record->path) {
-                            $gcs->deleteFile($record->path);
-                        }
-
-                        if ($record->hls_path) {
-                            $gcs->deleteByPrefix('videos/hls/' . $record->id);
+                            app(\App\Services\GcsUploadService::class)->deleteFile($record->path);
                         }
                     }),
             ])

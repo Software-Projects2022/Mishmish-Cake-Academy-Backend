@@ -16,16 +16,6 @@ class Video extends Model
         'duration' => 'integer',
     ];
 
-    public function isHlsReady(): bool
-    {
-        return $this->hls_status === 'ready' && !empty($this->hls_path);
-    }
-
-    public function isProcessingHls(): bool
-    {
-        return in_array($this->hls_status, ['pending', 'processing'], true);
-    }
-
     /**
      * Get all chapters that use this video.
      */

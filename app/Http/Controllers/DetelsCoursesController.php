@@ -29,7 +29,7 @@ class DetelsCoursesController extends Controller
 
     public function show($id)
     {
-        $course = Course::with(['lessons.chapters.video'])->find($id);
+        $course = Course::find($id);
         $client = auth()->guard('client')->user();
         if ($client->bookings()->where('course_id', $id)->where('status', 'approved')->exists()) {
             $booking = $client->bookings()->where('course_id', $id)->where('status', 'approved')->first();
