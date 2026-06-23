@@ -13,7 +13,8 @@
 
     @include('includes.footer')
 
-
+    @stack('styles')
+    @stack('scripts')
 </body>
 
 </html>

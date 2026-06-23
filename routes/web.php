@@ -8,6 +8,7 @@ use App\Http\Controllers\DetelsCoursesController;
 use App\Http\Controllers\AboutUsController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\VideoController;
+use App\Http\Controllers\VideoStreamController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 /*
 |--------------------------------------------------------------------------
@@ -40,6 +41,13 @@ Route::middleware('auth:client')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::post('/client/logout', [RegisteredUserController::class, 'logout'])->name('client.logout');
+
+    Route::prefix('chapter/{chapter}/video')->name('chapter.video.')->group(function () {
+        Route::get('/playback', [VideoStreamController::class, 'playbackInfo'])->name('playback');
+        Route::get('/stream', [VideoStreamController::class, 'streamMp4'])->name('stream');
+        Route::get('/playlist.m3u8', [VideoStreamController::class, 'playlist'])->name('playlist');
+        Route::get('/key', [VideoStreamController::class, 'decryptionKey'])->name('key');
+    });
 });
 
 Route::post('/course/book/{id}', [DetelsCoursesController::class, 'book'])->name('course.book');
