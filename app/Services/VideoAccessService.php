@@ -27,9 +27,21 @@ class VideoAccessService
 
     public function watermarkLabel(Client $client): string
     {
-        $name = trim($client->name ?: ($client->first_name . ' ' . $client->last_name));
-        $email = $client->email ?? '';
+        $phone = trim($client->phone ?? '');
+        $email = trim($client->email ?? '');
 
-        return trim($name . ($email ? ' | ' . $email : ''));
+        if ($phone !== '' && $email !== '') {
+            return $phone . ' | ' . $email;
+        }
+
+        if ($phone !== '') {
+            return $phone;
+        }
+
+        if ($email !== '') {
+            return $email;
+        }
+
+        return trim($client->name ?: ($client->first_name . ' ' . $client->last_name));
     }
 }

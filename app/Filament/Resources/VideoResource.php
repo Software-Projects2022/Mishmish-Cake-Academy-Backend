@@ -34,8 +34,8 @@ class VideoResource extends Resource
                     ->label('اسم الملف الأصلي')
                     ->disabled(),
 
-                Forms\Components\TextInput::make('url')
-                    ->label('رابط الفيديو')
+                Forms\Components\TextInput::make('path')
+                    ->label('مسار التخزين (GCS)')
                     ->disabled()
                     ->columnSpanFull(),
 
@@ -71,15 +71,10 @@ class VideoResource extends Resource
                     ->label('اسم الفيديو')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('url')
-                    ->label('رابط الفيديو')
-                    ->icon('heroicon-o-link')
-                    ->iconColor('primary')
-                    ->limit(50)
-                    ->searchable()
-                    ->sortable()
-                    ->url(fn (Video $record) => $record->url)
-                    ->openUrlInNewTab(),
+                Tables\Columns\TextColumn::make('path')
+                    ->label('مسار التخزين')
+                    ->limit(40)
+                    ->toggleable(),
 
                 Tables\Columns\TextColumn::make('formatted_size')
                     ->label('الحجم'),

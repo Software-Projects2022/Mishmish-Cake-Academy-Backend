@@ -93,6 +93,7 @@ class VideoStreamController extends Controller
         $playlist = $this->gcsService->getObjectContents($video->hls_path);
         $hlsDir = dirname($video->hls_path);
         $keyUrl = route('chapter.video.key', $chapter);
+        $segmentExpiry = config('video.segment_signed_url_expiry_minutes', 360);
         $lines = preg_split('/\r\n|\r|\n/', $playlist) ?: [];
         $rewritten = [];
 
@@ -113,9 +114,10 @@ class VideoStreamController extends Controller
                 continue;
             }
 
-            if (str_ends_with($trimmed, '.ts')) {
-                $segmentPath = $hlsDir . '/' . $trimmed;
-                $rewritten[] = $this->gcsService->generateSignedReadUrl($segmentPath);
+            if (!str_starts_with($trimmed, '#') && str_ends_with($trimmed, '.ts')) {
+                // Use basename so this works whether ffmpeg wrote relative or absolute segment paths.
+                $segmentPath = $hlsDir . '/' . basename($trimmed);
+                $rewritten[] = $this->gcsService->generateSignedReadUrl($segmentPath, $segmentExpiry);
                 continue;
             }
 

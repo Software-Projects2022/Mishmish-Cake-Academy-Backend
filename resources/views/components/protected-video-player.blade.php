@@ -2,6 +2,8 @@
 
 @php
     $hasProtectedVideo = (bool) $chapter->video;
+    $client = auth()->guard('client')->user();
+    $watermark = $client ? app(\App\Services\VideoAccessService::class)->watermarkLabel($client) : '';
 @endphp
 
 @if($hasProtectedVideo)
@@ -25,17 +27,23 @@
             جاري تحميل الفيديو...
         </div>
     </div>
-@elseif($chapter->video_url)
-    <div class="protected-video-player">
+@elseif($chapter->getRawOriginal('video_url'))
+    <div class="protected-video-player protected-video-player--legacy" data-watermark="{{ $watermark }}">
         <div class="protected-video-player__container">
             <video
                 class="protected-video-player__video"
-                src="{{ $chapter->video_url }}"
+                src="{{ $chapter->getRawOriginal('video_url') }}"
                 controls
                 controlsList="nodownload noplaybackrate"
                 disablePictureInPicture
                 playsinline
             ></video>
+            @if($watermark)
+                <div class="protected-video-player__watermark" data-label="{{ $watermark }}" aria-hidden="true"></div>
+            @endif
+        </div>
+        <div class="protected-video-player__status protected-video-player__status--processing">
+            فيديو قديم — يُفضّل ربطه من مكتبة الفيديوهات للحماية الكاملة.
         </div>
     </div>
 @else

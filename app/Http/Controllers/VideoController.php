@@ -103,11 +103,18 @@ class VideoController extends Controller
                 'hls_status' => 'pending',
             ]);
 
-            ProcessVideoToHls::dispatch($video->fresh());
+            // HLS transcoding must never break upload confirmation. On the "sync" queue
+            // driver this runs inline, so we isolate its failures here.
+            try {
+                ProcessVideoToHls::dispatch($video->fresh());
+            } catch (\Throwable $e) {
+                Log::error('HLS dispatch failed for video ' . $video->id . ': ' . $e->getMessage());
+                $video->update(['hls_status' => 'failed', 'hls_error' => $e->getMessage()]);
+            }
 
             return response()->json([
                 'success' => true,
-                'video' => $video,
+                'video' => $video->fresh()->makeHidden(['url', 'path', 'encryption_key']),
             ]);
         } catch (\Exception $e) {
             Log::error('GCS Confirm Error: ' . $e->getMessage());
@@ -153,7 +160,7 @@ class VideoController extends Controller
     {
         $videos = Video::where('status', 'completed')
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->get(['id', 'name', 'original_name', 'size', 'mime_type', 'duration', 'status', 'hls_status', 'created_at']);
 
         return response()->json([
             'success' => true,

@@ -111,6 +111,15 @@
         document.querySelectorAll('.protected-video-player[data-playback-url]').forEach(function (player) {
             initProtectedPlayer(player);
         });
+
+        document.querySelectorAll('.protected-video-player--legacy').forEach(function (player) {
+            blockContextMenu(player);
+
+            const watermark = player.dataset.watermark;
+            if (watermark) {
+                applyWatermark(player, watermark);
+            }
+        });
     });
 
     window.addEventListener('beforeunload', function () {

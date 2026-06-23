@@ -11,6 +11,10 @@ class Video extends Model
 
     protected $guarded = ['id'];
 
+    protected $hidden = [
+        'encryption_key',
+    ];
+
     protected $casts = [
         'size' => 'integer',
         'duration' => 'integer',

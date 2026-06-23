@@ -171,7 +171,7 @@ class GcsUploadService
      */
     public function generateSignedReadUrl(
         string $path,
-        int $expiresInMinutes = null
+        ?int $expiresInMinutes = null
     ): string {
         $expiresInMinutes ??= config('video.signed_url_expiry_minutes', 30);
 

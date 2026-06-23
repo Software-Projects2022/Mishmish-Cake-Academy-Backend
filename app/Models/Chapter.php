@@ -21,15 +21,14 @@ class Chapter extends Model
     }
 
     /**
-     * Get video URL (from video relation or legacy video_url field).
+     * Legacy accessor — does not expose direct GCS URLs when using the video library.
      */
     public function getVideoUrlAttribute($value)
     {
-        // If there's a related video, use its URL
-        if ($this->video) {
-            return $this->video->url;
+        if ($this->video_id) {
+            return null;
         }
-        // Fallback to legacy video_url field
+
         return $value;
     }
 }
