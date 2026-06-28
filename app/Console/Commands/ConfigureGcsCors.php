@@ -7,37 +7,38 @@ use Google\Cloud\Storage\StorageClient;
 
 class ConfigureGcsCors extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'video:configure-cors';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Configure CORS for Google Cloud Storage Bucket to allow direct uploads';
+    protected $description = 'Configure CORS on the GCS bucket for browser uploads and HLS playback';
 
-    /**
-     * Execute the console command.
-     */
-    public function handle()
+    public function handle(): int
     {
         $projectId = config('filesystems.disks.gcs.project_id');
         $bucketName = config('filesystems.disks.gcs.bucket');
         $keyFile = config('filesystems.disks.gcs.key_file');
 
         if (!$projectId || !$bucketName || !$keyFile) {
-            $this->error('Please configure GCS settings in .env file first (GCS_PROJECT_ID, GCS_BUCKET, GCS_KEY_FILE).');
+            $this->error('Configure GCS settings in .env first (GCS_PROJECT_ID, GCS_BUCKET, GCS_KEY_FILE).');
             return 1;
         }
 
         if (!file_exists($keyFile) && !file_exists(base_path($keyFile))) {
-             $this->error("Key file not found at: $keyFile");
-             return 1;
+            $this->error("Key file not found at: $keyFile");
+            return 1;
+        }
+
+        $origins = config('video.cors_origins', []);
+
+        if ($origins === []) {
+            $origins = array_values(array_unique(array_filter([
+                rtrim((string) config('app.url'), '/'),
+                'http://localhost',
+                'http://127.0.0.1',
+            ])));
+        }
+
+        if ($origins === []) {
+            $origins = ['*'];
         }
 
         try {
@@ -50,8 +51,20 @@ class ConfigureGcsCors extends Command
 
             $cors = [
                 [
-                    'method' => ['GET', 'PUT', 'OPTIONS'],
-                    'origin' => ['*'], // يمكنك تغيير * إلى رابط موقعك للحماية
+                    'method' => ['GET', 'HEAD', 'OPTIONS'],
+                    'origin' => $origins,
+                    'responseHeader' => [
+                        'Content-Type',
+                        'Content-Length',
+                        'Content-Range',
+                        'Accept-Ranges',
+                        'Range',
+                    ],
+                    'maxAgeSeconds' => 3600,
+                ],
+                [
+                    'method' => ['GET', 'PUT', 'POST', 'OPTIONS'],
+                    'origin' => $origins,
                     'responseHeader' => ['Content-Type', 'x-goog-resumable'],
                     'maxAgeSeconds' => 3600,
                 ],
@@ -59,11 +72,11 @@ class ConfigureGcsCors extends Command
 
             $bucket->update(['cors' => $cors]);
 
-            $this->info("Successfully configured CORS for bucket: $bucketName");
-            $this->info("You can now upload files directly from the browser.");
+            $this->info("CORS configured for bucket: {$bucketName}");
+            $this->line('Origins: ' . implode(', ', $origins));
 
         } catch (\Exception $e) {
-            $this->error("Error: " . $e->getMessage());
+            $this->error('Error: ' . $e->getMessage());
             return 1;
         }
 

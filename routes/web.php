@@ -47,12 +47,13 @@ Route::middleware('auth:client')->group(function () {
 
     Route::post('/client/logout', [RegisteredUserController::class, 'logout'])->name('client.logout');
 
-    Route::prefix('chapter/{chapter}/video')->name('chapter.video.')->group(function () {
-        Route::get('/playback', [VideoStreamController::class, 'playbackInfo'])->name('playback');
-        Route::get('/stream', [VideoStreamController::class, 'streamMp4'])->name('stream');
-        Route::get('/playlist.m3u8', [VideoStreamController::class, 'playlist'])->name('playlist');
-        Route::get('/key', [VideoStreamController::class, 'decryptionKey'])->name('key');
-    });
+        Route::prefix('chapter/{chapter}/video')->name('chapter.video.')->group(function () {
+            Route::get('/playback', [VideoStreamController::class, 'playbackInfo'])->name('playback');
+            Route::get('/playlist.m3u8', [VideoStreamController::class, 'playlist'])->name('playlist');
+            Route::get('/key', [VideoStreamController::class, 'decryptionKey'])
+                ->middleware('throttle:video-keys')
+                ->name('key');
+        });
 });
 
 Route::post('/course/book/{id}', [DetelsCoursesController::class, 'book'])->name('course.book');

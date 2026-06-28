@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\Video;
 use App\Services\GcsUploadService;
+use App\Services\HlsPlaylistService;
 use App\Services\HlsTranscodingService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -21,11 +22,13 @@ class ProcessVideoToHls implements ShouldQueue
 
     public function __construct(public Video $video)
     {
+        $this->onQueue('video-processing');
     }
 
     public function handle(
         GcsUploadService $gcsService,
-        HlsTranscodingService $hlsService
+        HlsTranscodingService $hlsService,
+        HlsPlaylistService $playlistService
     ): void {
         $video = $this->video->fresh();
 
@@ -56,6 +59,8 @@ class ProcessVideoToHls implements ShouldQueue
                 'hls_status' => 'ready',
                 'hls_error' => null,
             ]);
+
+            $playlistService->forgetCache($video->fresh());
         } catch (\Throwable $e) {
             Log::error('HLS processing failed for video ' . $video->id . ': ' . $e->getMessage());
 

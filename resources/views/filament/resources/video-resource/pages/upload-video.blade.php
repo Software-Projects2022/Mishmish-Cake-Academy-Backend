@@ -257,13 +257,18 @@
                                 console.error('Failed to confirm upload:', error);
                             }
                         } else {
-                            // console.log(this.xhr.status);
-                            this.handleUploadError('فشل رفع الملف');
+                            const detail = (this.xhr.responseText || '').slice(0, 300);
+                            this.handleUploadError(
+                                'فشل رفع الملف (HTTP ' + this.xhr.status + ')' +
+                                (detail ? ': ' + detail : '')
+                            );
                         }
                     });
 
                     this.xhr.addEventListener('error', () => {
-                        this.handleUploadError('حدث خطأ أثناء الرفع');
+                        this.handleUploadError(
+                            'حدث خطأ أثناء الرفع. غالباً CORS: تأكد أن عنوان الموقع في المتصفح مضاف في VIDEO_CORS_ORIGINS ثم شغّل: php artisan video:configure-cors'
+                        );
                     });
 
                     this.xhr.addEventListener('abort', () => {

@@ -28,6 +28,12 @@ class RouteServiceProvider extends ServiceProvider
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
 
+        RateLimiter::for('video-keys', function (Request $request) {
+            $client = auth()->guard('client')->user();
+
+            return Limit::perMinute(60)->by($client?->id ?: $request->ip());
+        });
+
         $this->routes(function () {
             Route::middleware('api')
                 ->prefix('api')

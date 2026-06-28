@@ -20,3 +20,6 @@ yarn-error.log
 public/sharp.json
 sharp.json
 *sharp.json
+scripts/test-*.php
+viewmind_mishmish.sql
+laravel-gcs-protected-video-streaming-plan.md

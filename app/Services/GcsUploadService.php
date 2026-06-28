@@ -167,6 +167,22 @@ class GcsUploadService
     }
 
     /**
+     * Extract the object path from a public GCS URL for this bucket.
+     */
+    public function pathFromPublicUrl(string $url): ?string
+    {
+        $prefix = 'https://storage.googleapis.com/' . $this->bucketName . '/';
+
+        if (!str_starts_with($url, $prefix)) {
+            return null;
+        }
+
+        $path = substr($url, strlen($prefix));
+
+        return $path !== '' ? $path : null;
+    }
+
+    /**
      * Generate a signed URL for reading a private file from GCS.
      */
     public function generateSignedReadUrl(
@@ -187,11 +203,74 @@ class GcsUploadService
     }
 
     /**
-     * Download a GCS object to a local file.
+     * Download a GCS object to a local file with retries and HTTP fallback.
      */
-    public function downloadToLocal(string $path, string $localPath): void
+    public function downloadToLocal(string $path, string $localPath, int $maxAttempts = 3): void
     {
-        $this->bucket->object($path)->downloadToFile($localPath);
+        $directory = dirname($localPath);
+        if (!is_dir($directory)) {
+            mkdir($directory, 0755, true);
+        }
+
+        $lastException = null;
+
+        for ($attempt = 1; $attempt <= $maxAttempts; $attempt++) {
+            try {
+                $this->bucket->object($path)->downloadToFile($localPath);
+
+                if (is_file($localPath) && filesize($localPath) > 0) {
+                    return;
+                }
+
+                throw new \RuntimeException('Downloaded file is empty.');
+            } catch (\Throwable $e) {
+                $lastException = $e;
+
+                if (is_file($localPath)) {
+                    @unlink($localPath);
+                }
+
+                if ($attempt < $maxAttempts) {
+                    sleep($attempt * 3);
+                }
+            }
+        }
+
+        try {
+            $this->downloadToLocalViaSignedUrl($path, $localPath);
+        } catch (\Throwable $httpException) {
+            throw $lastException ?? $httpException;
+        }
+    }
+
+    protected function downloadToLocalViaSignedUrl(string $path, string $localPath): void
+    {
+        $url = $this->generateSignedReadUrl($path, 30);
+
+        $response = \Illuminate\Support\Facades\Http::timeout(600)
+            ->retry(3, 3000)
+            ->withOptions(['stream' => true])
+            ->get($url);
+
+        if (!$response->successful()) {
+            throw new \RuntimeException('HTTP download failed with status ' . $response->status());
+        }
+
+        $handle = fopen($localPath, 'wb');
+        if ($handle === false) {
+            throw new \RuntimeException('Unable to open local file for writing.');
+        }
+
+        $body = $response->toPsrResponse()->getBody();
+        while (!$body->eof()) {
+            fwrite($handle, $body->read(1024 * 1024));
+        }
+
+        fclose($handle);
+
+        if (!is_file($localPath) || filesize($localPath) === 0) {
+            throw new \RuntimeException('HTTP download produced an empty file.');
+        }
     }
 
     /**
@@ -203,20 +282,49 @@ class GcsUploadService
     }
 
     /**
+     * Open a read stream for a GCS object.
+     *
+     * @return resource|null
+     */
+    public function openReadStream(string $path)
+    {
+        $stream = $this->bucket->object($path)->downloadAsStream();
+
+        return $stream->detach();
+    }
+
+    /**
      * Upload a local file to GCS.
      */
     public function uploadFromLocal(
         string $localPath,
         string $gcsPath,
-        ?string $contentType = null
+        ?string $contentType = null,
+        int $maxAttempts = 3
     ): void {
-        $options = ['name' => $gcsPath];
+        $lastException = null;
 
-        if ($contentType) {
-            $options['metadata'] = ['contentType' => $contentType];
+        for ($attempt = 1; $attempt <= $maxAttempts; $attempt++) {
+            try {
+                $options = ['name' => $gcsPath];
+
+                if ($contentType) {
+                    $options['metadata'] = ['contentType' => $contentType];
+                }
+
+                $this->bucket->upload(fopen($localPath, 'r'), $options);
+
+                return;
+            } catch (\Throwable $e) {
+                $lastException = $e;
+
+                if ($attempt < $maxAttempts) {
+                    sleep($attempt * 3);
+                }
+            }
         }
 
-        $this->bucket->upload(fopen($localPath, 'r'), $options);
+        throw $lastException ?? new \RuntimeException('GCS upload failed.');
     }
 
     /**

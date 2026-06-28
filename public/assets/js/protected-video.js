@@ -33,6 +33,38 @@
         }
     }
 
+    function clearLoadingStatus(player) {
+        setStatus(player, '');
+    }
+
+    function attachPlaybackListeners(player, video) {
+        video.addEventListener('loadeddata', function () {
+            clearLoadingStatus(player);
+        });
+
+        video.addEventListener('error', function () {
+            setStatus(player, 'تعذر تشغيل الفيديو. حاول تحديث الصفحة.', 'error');
+        });
+    }
+
+    function createHlsConfig() {
+        return {
+            enableWorker: true,
+            lowLatencyMode: false,
+            xhrSetup: function (xhr, url) {
+                // Signed GCS segment URLs must NOT send cookies — breaks CORS.
+                try {
+                    const target = new URL(url, window.location.href);
+                    if (target.origin === window.location.origin) {
+                        xhr.withCredentials = true;
+                    }
+                } catch (error) {
+                    xhr.withCredentials = true;
+                }
+            },
+        };
+    }
+
     function destroyHls(instance) {
         if (instance) {
             instance.destroy();
@@ -40,6 +72,12 @@
     }
 
     function initProtectedPlayer(player) {
+        if (player.dataset.playbackReady === '1') {
+            return;
+        }
+
+        player.dataset.playbackReady = '1';
+
         const playbackUrl = player.dataset.playbackUrl;
         const video = player.querySelector('.protected-video-player__video');
 
@@ -72,34 +110,50 @@
 
                 applyWatermark(player, data.watermark);
 
-                if (data.processing) {
-                    setStatus(player, 'جاري تجهيز نسخة محمية من الفيديو... سيتم التشغيل مؤقتاً بالنسخة الأصلية.', 'processing');
+                if (data.type === 'processing' || (data.processing && !data.src)) {
+                    setStatus(
+                        player,
+                        data.message || 'جاري تجهيز نسخة محمية من الفيديو... يُرجى المحاولة لاحقاً.',
+                        'processing'
+                    );
+                    return;
+                }
+
+                if (data.legacy) {
+                    setStatus(player, 'فيديو قديم — يُفضّل ربطه من مكتبة الفيديوهات للحماية الكاملة.', 'processing');
+                } else if (data.processing) {
+                    setStatus(player, 'جاري تجهيز نسخة محمية من الفيديو...', 'processing');
                 } else {
                     setStatus(player, '');
                 }
 
+                if (!data.src) {
+                    return;
+                }
+
                 if (data.type === 'hls') {
                     if (window.Hls && Hls.isSupported()) {
-                        const hls = new Hls({
-                            enableWorker: true,
-                            lowLatencyMode: false,
-                        });
+                        const hls = new Hls(createHlsConfig());
 
                         player._hlsInstance = hls;
                         hls.loadSource(data.src);
                         hls.attachMedia(video);
+                        attachPlaybackListeners(player, video);
                         hls.on(Hls.Events.ERROR, function (event, errorData) {
                             if (errorData.fatal) {
+                                console.error('HLS fatal error', errorData);
                                 setStatus(player, 'حدث خطأ أثناء تشغيل الفيديو المحمي.', 'error');
                             }
                         });
                     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                         video.src = data.src;
+                        attachPlaybackListeners(player, video);
                     } else {
                         throw new Error('المتصفح لا يدعم تشغيل الفيديو المحمي');
                     }
                 } else {
                     video.src = data.src;
+                    attachPlaybackListeners(player, video);
                 }
             })
             .catch(function (error) {
@@ -107,19 +161,36 @@
             });
     }
 
+    function observeProtectedPlayers() {
+        const players = document.querySelectorAll('.protected-video-player[data-playback-url]');
+
+        if (!('IntersectionObserver' in window)) {
+            players.forEach(initProtectedPlayer);
+            return;
+        }
+
+        const observer = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (!entry.isIntersecting) {
+                    return;
+                }
+
+                initProtectedPlayer(entry.target);
+                observer.unobserve(entry.target);
+            });
+        }, {
+            root: null,
+            rootMargin: '200px 0px',
+            threshold: 0.1,
+        });
+
+        players.forEach(function (player) {
+            observer.observe(player);
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.protected-video-player[data-playback-url]').forEach(function (player) {
-            initProtectedPlayer(player);
-        });
-
-        document.querySelectorAll('.protected-video-player--legacy').forEach(function (player) {
-            blockContextMenu(player);
-
-            const watermark = player.dataset.watermark;
-            if (watermark) {
-                applyWatermark(player, watermark);
-            }
-        });
+        observeProtectedPlayers();
     });
 
     window.addEventListener('beforeunload', function () {

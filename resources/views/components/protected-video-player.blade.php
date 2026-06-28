@@ -1,16 +1,17 @@
 @props(['chapter'])
 
 @php
-    $hasProtectedVideo = (bool) $chapter->video;
+    $hasVideo = (bool) $chapter->video || $chapter->getRawOriginal('video_url');
     $client = auth()->guard('client')->user();
     $watermark = $client ? app(\App\Services\VideoAccessService::class)->watermarkLabel($client) : '';
 @endphp
 
-@if($hasProtectedVideo)
+@if($hasVideo)
     <div
-        class="protected-video-player"
+        class="protected-video-player{{ $chapter->video ? '' : ' protected-video-player--legacy' }}"
         data-chapter-id="{{ $chapter->id }}"
         data-playback-url="{{ route('chapter.video.playback', $chapter) }}"
+        @if(!$chapter->video && $watermark) data-watermark="{{ $watermark }}" @endif
     >
         <div class="protected-video-player__container">
             <video
@@ -19,31 +20,12 @@
                 controlsList="nodownload noplaybackrate"
                 disablePictureInPicture
                 playsinline
-                preload="metadata"
+                preload="none"
             ></video>
             <div class="protected-video-player__watermark" aria-hidden="true"></div>
         </div>
         <div class="protected-video-player__status protected-video-player__status--loading">
             جاري تحميل الفيديو...
-        </div>
-    </div>
-@elseif($chapter->getRawOriginal('video_url'))
-    <div class="protected-video-player protected-video-player--legacy" data-watermark="{{ $watermark }}">
-        <div class="protected-video-player__container">
-            <video
-                class="protected-video-player__video"
-                src="{{ $chapter->getRawOriginal('video_url') }}"
-                controls
-                controlsList="nodownload noplaybackrate"
-                disablePictureInPicture
-                playsinline
-            ></video>
-            @if($watermark)
-                <div class="protected-video-player__watermark" data-label="{{ $watermark }}" aria-hidden="true"></div>
-            @endif
-        </div>
-        <div class="protected-video-player__status protected-video-player__status--processing">
-            فيديو قديم — يُفضّل ربطه من مكتبة الفيديوهات للحماية الكاملة.
         </div>
     </div>
 @else
@@ -57,6 +39,6 @@
 
     @push('scripts')
         <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js"></script>
-        <script src="{{ asset('assets/js/protected-video.js') }}"></script>
+        <script src="{{ asset('assets/js/protected-video.js') }}?v=5"></script>
     @endpush
 @endonce
