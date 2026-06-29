@@ -122,7 +122,11 @@
                 if (data.legacy) {
                     setStatus(player, 'فيديو قديم — يُفضّل ربطه من مكتبة الفيديوهات للحماية الكاملة.', 'processing');
                 } else if (data.processing) {
-                    setStatus(player, 'جاري تجهيز نسخة محمية من الفيديو...', 'processing');
+                    setStatus(
+                        player,
+                        data.message || 'جاري تجهيز نسخة محمية من الفيديو...',
+                        'processing'
+                    );
                 } else {
                     setStatus(player, '');
                 }

@@ -128,17 +128,29 @@ class VideoStreamController extends Controller
         }
 
         $isProcessing = in_array($video->hls_status, ['pending', 'processing'], true);
+        $allowFallback = config('video.allow_mp4_fallback', false);
 
-        if ($isProcessing || !config('video.allow_mp4_fallback', false)) {
+        if ($allowFallback && $video->path) {
+            return response()->json([
+                'success' => true,
+                'type' => 'mp4',
+                'src' => $this->gcsService->generateSignedReadUrl($video->path),
+                'watermark' => $watermark,
+                'processing' => $isProcessing,
+                'message' => $isProcessing
+                    ? 'جاري تجهيز نسخة محمية — يتم التشغيل بالنسخة الأصلية مؤقتاً.'
+                    : null,
+            ]);
+        }
+
+        if ($isProcessing) {
             return response()->json([
                 'success' => true,
                 'type' => 'processing',
                 'src' => null,
                 'watermark' => $watermark,
                 'processing' => true,
-                'message' => $isProcessing
-                    ? 'جاري تجهيز نسخة محمية من الفيديو...'
-                    : 'الفيديو غير متاح حالياً. يُرجى المحاولة لاحقاً.',
+                'message' => 'جاري تجهيز نسخة محمية من الفيديو...',
             ]);
         }
 
@@ -148,10 +160,11 @@ class VideoStreamController extends Controller
 
         return response()->json([
             'success' => true,
-            'type' => 'mp4',
-            'src' => $this->gcsService->generateSignedReadUrl($video->path),
+            'type' => 'processing',
+            'src' => null,
             'watermark' => $watermark,
-            'processing' => false,
+            'processing' => true,
+            'message' => 'الفيديو غير متاح حالياً. يُرجى المحاولة لاحقاً.',
         ]);
     }
 
