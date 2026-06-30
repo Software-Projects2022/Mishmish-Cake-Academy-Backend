@@ -116,27 +116,41 @@ class VideoStreamController extends Controller
     protected function playbackForVideoLibrary(Chapter $chapter, string $watermark): JsonResponse
     {
         $video = $chapter->video;
+        $allowFallback = (bool) config('video.allow_mp4_fallback', false);
+        $storagePath = $video->storagePath();
+        $mp4Src = ($allowFallback && $storagePath)
+            ? $this->signedMp4Url($storagePath)
+            : null;
 
         if ($video->hls_status === 'ready' && $video->hls_path) {
-            return response()->json([
+            $payload = [
                 'success' => true,
                 'type' => 'hls',
                 'src' => route('chapter.video.playlist', $chapter),
                 'watermark' => $watermark,
                 'processing' => false,
-            ]);
+                'playback_mode' => 'hls',
+                'hls_status' => $video->hls_status,
+            ];
+
+            if ($mp4Src) {
+                $payload['mp4_fallback'] = $mp4Src;
+            }
+
+            return response()->json($payload);
         }
 
         $isProcessing = in_array($video->hls_status, ['pending', 'processing'], true);
-        $allowFallback = config('video.allow_mp4_fallback', false);
 
-        if ($allowFallback && $video->path) {
+        if ($mp4Src) {
             return response()->json([
                 'success' => true,
                 'type' => 'mp4',
-                'src' => $this->gcsService->generateSignedReadUrl($video->path),
+                'src' => $mp4Src,
                 'watermark' => $watermark,
                 'processing' => $isProcessing,
+                'playback_mode' => 'mp4_fallback',
+                'hls_status' => $video->hls_status,
                 'message' => $isProcessing
                     ? 'جاري تجهيز نسخة محمية — يتم التشغيل بالنسخة الأصلية مؤقتاً.'
                     : null,
@@ -150,22 +164,29 @@ class VideoStreamController extends Controller
                 'src' => null,
                 'watermark' => $watermark,
                 'processing' => true,
+                'playback_mode' => 'blocked',
+                'hls_status' => $video->hls_status,
                 'message' => 'جاري تجهيز نسخة محمية من الفيديو...',
             ]);
         }
 
-        if (!$video->path) {
-            return response()->json(['success' => false, 'message' => 'الفيديو غير متاح حالياً'], 404);
-        }
-
         return response()->json([
-            'success' => true,
-            'type' => 'processing',
-            'src' => null,
-            'watermark' => $watermark,
-            'processing' => true,
-            'message' => 'الفيديو غير متاح حالياً. يُرجى المحاولة لاحقاً.',
-        ]);
+            'success' => false,
+            'message' => 'الفيديو غير متاح حالياً',
+            'playback_mode' => 'unavailable',
+            'hls_status' => $video->hls_status,
+        ], 404);
+    }
+
+    protected function signedMp4Url(string $storagePath): ?string
+    {
+        try {
+            return $this->gcsService->generateSignedReadUrl($storagePath);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return null;
+        }
     }
 
     protected function playbackForLegacyChapter(Chapter $chapter, string $watermark): JsonResponse

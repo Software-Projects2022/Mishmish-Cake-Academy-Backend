@@ -31,6 +31,32 @@ class Video extends Model
     }
 
     /**
+     * GCS object path for the source MP4 (path column, or parsed from public url).
+     */
+    public function storagePath(): ?string
+    {
+        $path = trim((string) $this->path);
+        if ($path !== '') {
+            return $path;
+        }
+
+        $url = trim((string) $this->url);
+        if ($url === '') {
+            return null;
+        }
+
+        $prefix = 'https://storage.googleapis.com/';
+        if (!str_starts_with($url, $prefix)) {
+            return null;
+        }
+
+        $withoutScheme = substr($url, strlen('https://storage.googleapis.com/'));
+        $slash = strpos($withoutScheme, '/');
+
+        return $slash !== false ? substr($withoutScheme, $slash + 1) : null;
+    }
+
+    /**
      * Get all chapters that use this video.
      */
     public function chapters()

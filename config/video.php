@@ -13,7 +13,10 @@ return [
     'key_token_ttl_minutes' => (int) env('VIDEO_KEY_TOKEN_TTL', 30),
 
     // When false, only HLS-ready videos play; others show a processing message.
-    'allow_mp4_fallback' => filter_var(env('VIDEO_ALLOW_MP4_FALLBACK', true), FILTER_VALIDATE_BOOL),
+    'allow_mp4_fallback' => filter_var(
+        trim((string) env('VIDEO_ALLOW_MP4_FALLBACK', 'true')),
+        FILTER_VALIDATE_BOOLEAN
+    ),
 
     'ffmpeg_path' => env('FFMPEG_PATH', 'ffmpeg'),
     'hls_segment_duration' => (int) env('VIDEO_HLS_SEGMENT_DURATION', 10),
